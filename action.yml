@@ -1,0 +1,20 @@
+name: Release Action
+description: GitHub Action to automatically release packages using lerna or semantic-release
+author: juliendargelos
+inputs:
+  github_token:
+    description: GitHub Token used to create the release on GitHub and publish on GitHub registry.
+    required: true
+  npm_token:
+    description: NPM token with publish permission. If not provided, publishing to npm registry will be skipped.
+    required: false
+  publish:
+    description: Enable or disable publishing to package registries. When set to false, releases are only created on GitHub.
+    default: true
+    required: false
+runs:
+  using: node12
+  main: dist/index.js
+branding:
+  icon: package
+  color: purple

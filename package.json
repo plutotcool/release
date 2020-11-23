@@ -1,0 +1,36 @@
+{
+  "private": true,
+  "name": "@plutocool/release",
+  "version": "1.0.0",
+  "description": "GitHub Action to automatically release packages using lerna or semantic-release",
+  "author": "Julien Dargelos <julien@plutot.cool>",
+  "license": "MIT",
+  "repository": "plutotcool/release",
+  "bugs": "https://github.com/plutotcool/release/issues",
+  "homepage": "https://github.com/plutotcool/release#readme",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "ncc build src/index.ts --license licenses.txt",
+    "prebuild": "rm -Rf dist",
+    "postbuild": "git add dist"
+  },
+  "pre-commit": "build",
+  "keywords": [
+    "GitHub Actions",
+    "publish",
+    "release",
+    "npm",
+    "lerna",
+    "semantic-release"
+  ],
+  "dependencies": {
+    "@actions/core": "^1.2.6",
+    "@actions/exec": "^1.0.4",
+    "@actions/github": "^4.0.0"
+  },
+  "devDependencies": {
+    "@vercel/ncc": "^0.25.1",
+    "pre-commit": "^1.2.2",
+    "typescript": "^4.1.2"
+  }
+}
