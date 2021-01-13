@@ -25,19 +25,6 @@ import { promises as fs } from 'fs'
     ) => Promise<void>
 
     try {
-      const pkg = JSON.parse((await fs.readFile('package.json')).toString())
-      privatePackage = pkg.private || false
-      scope = pkg.name.slice(0, pkg.name.indexOf('/'))
-      publishToGithub = publish && !privatePackage && scope === ownerScope
-      publishToNPM = publish && !privatePackage && !!npmToken
-    } catch (_) {
-      privatePackage = true
-      scope = ownerScope
-      publishToGithub = false
-      publishToNPM = false
-    }
-
-    try {
       await fs.access('lerna.json')
       cli = 'lerna'
       release = lernaRelease
@@ -52,6 +39,19 @@ import { promises as fs } from 'fs'
       core.info(
         'Lerna not detected, releasing using semantic-release'
       )
+    }
+
+    try {
+      const pkg = JSON.parse((await fs.readFile('package.json')).toString())
+      privatePackage = cli !== 'lerna' && pkg.private
+      scope = pkg.name.slice(0, pkg.name.indexOf('/'))
+      publishToGithub = publish && !privatePackage && scope === ownerScope
+      publishToNPM = publish && !privatePackage && !!npmToken
+    } catch (_) {
+      privatePackage = true
+      scope = ownerScope
+      publishToGithub = false
+      publishToNPM = false
     }
 
     if (!publish) {

@@ -6979,19 +6979,6 @@ __webpack_require__.r(__webpack_exports__);
         let cliPath;
         let release;
         try {
-            const pkg = JSON.parse((await fs__WEBPACK_IMPORTED_MODULE_3__.promises.readFile('package.json')).toString());
-            privatePackage = pkg.private || false;
-            scope = pkg.name.slice(0, pkg.name.indexOf('/'));
-            publishToGithub = publish && !privatePackage && scope === ownerScope;
-            publishToNPM = publish && !privatePackage && !!npmToken;
-        }
-        catch (_) {
-            privatePackage = true;
-            scope = ownerScope;
-            publishToGithub = false;
-            publishToNPM = false;
-        }
-        try {
             await fs__WEBPACK_IMPORTED_MODULE_3__.promises.access('lerna.json');
             cli = 'lerna';
             release = lernaRelease;
@@ -7001,6 +6988,19 @@ __webpack_require__.r(__webpack_exports__);
             cli = 'semantic-release';
             release = semanticRelease;
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Lerna not detected, releasing using semantic-release');
+        }
+        try {
+            const pkg = JSON.parse((await fs__WEBPACK_IMPORTED_MODULE_3__.promises.readFile('package.json')).toString());
+            privatePackage = cli !== 'lerna' && pkg.private;
+            scope = pkg.name.slice(0, pkg.name.indexOf('/'));
+            publishToGithub = publish && !privatePackage && scope === ownerScope;
+            publishToNPM = publish && !privatePackage && !!npmToken;
+        }
+        catch (_) {
+            privatePackage = true;
+            scope = ownerScope;
+            publishToGithub = false;
+            publishToNPM = false;
         }
         if (!publish) {
             _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Publishing disabled, skipping publishing to package registries');
