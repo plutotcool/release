@@ -7062,6 +7062,7 @@ async function lernaRelease(path, release, publish, env = {}) {
         await _actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec('node', [
             path,
             'publish',
+            'from-package',
             '--yes'
         ], { env });
     }

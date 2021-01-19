@@ -152,6 +152,7 @@ async function lernaRelease(
     await exec.exec('node', [
       path,
       'publish',
+      'from-package',
       '--yes'
     ], { env })
   }
