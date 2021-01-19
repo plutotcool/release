@@ -7030,6 +7030,7 @@ __webpack_require__.r(__webpack_exports__);
             .bin[cli]}`;
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Creating release on GitHub${publishToGithub ? ' and publishing to GitHub registry' : ''}...`);
         await release(cliPath, true, publishToGithub, {
+            ...process.env,
             NPM_CONFIG_REGISTRY: `https://npm.pkg.github.com/${owner}`,
             NPM_TOKEN: githubToken,
             GITHUB_TOKEN: githubToken
@@ -7038,6 +7039,7 @@ __webpack_require__.r(__webpack_exports__);
         publishToGithub && _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Package available on GitHub registry');
         publishToNPM && _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Publishing to NPM registry...');
         await release(cliPath, false, publishToNPM, {
+            ...process.env,
             NPM_CONFIG_REGISTRY: 'https://registry.npmjs.org',
             NPM_TOKEN: npmToken
         });
