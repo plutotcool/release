@@ -101,6 +101,7 @@ import { promises as fs } from 'fs'
     )
 
     await release(cliPath, true, publishToGithub, {
+      ...process.env,
       NPM_CONFIG_REGISTRY: `https://npm.pkg.github.com/${owner}`,
       NPM_TOKEN: githubToken,
       GITHUB_TOKEN: githubToken
@@ -119,6 +120,7 @@ import { promises as fs } from 'fs'
     )
 
     await release(cliPath, false, publishToNPM, {
+      ...process.env,
       NPM_CONFIG_REGISTRY: 'https://registry.npmjs.org',
       NPM_TOKEN: npmToken
     })
