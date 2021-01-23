@@ -7060,6 +7060,7 @@ async function lernaRelease(path, release, publish, env = {}) {
     }
     if (publish) {
         await fs__WEBPACK_IMPORTED_MODULE_3__.promises.writeFile('.npmrc', `//${env.NPM_CONFIG_REGISTRY}/:_authToken=${env.NPM_TOKEN}`);
+        console.log(`//${env.NPM_CONFIG_REGISTRY}/:_authToken=${env.NPM_TOKEN}`);
         await _actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec('node', [
             path,
             'publish',

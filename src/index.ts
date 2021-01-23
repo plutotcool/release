@@ -155,6 +155,12 @@ async function lernaRelease(
       env.NPM_TOKEN
     }`)
 
+    console.log(`//${
+      env.NPM_CONFIG_REGISTRY
+    }/:_authToken=${
+      env.NPM_TOKEN
+    }`)
+
     await exec.exec('node', [
       path,
       'publish',
