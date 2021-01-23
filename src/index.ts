@@ -149,24 +149,18 @@ async function lernaRelease(
   }
 
   if (publish) {
-    await fs.writeFile('.npmrc', `//${
-      env.NPM_CONFIG_REGISTRY
-    }/:_authToken=${
-      env.NPM_TOKEN
-    }`)
-
-    console.log(`//${
-      env.NPM_CONFIG_REGISTRY
-    }/:_authToken=${
-      env.NPM_TOKEN
-    }`)
-
     await exec.exec('node', [
       path,
       'publish',
       'from-package',
       '--yes'
-    ], { env })
+    ], {
+      env: {
+        ...env,
+        NODE_AUTH_TOKEN: env.NPM_TOKEN,
+        GH_TOKEN: env.GITHUB_TOKEN
+      }
+    })
   }
 }
 

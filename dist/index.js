@@ -7059,14 +7059,18 @@ async function lernaRelease(path, release, publish, env = {}) {
         ], { env });
     }
     if (publish) {
-        await fs__WEBPACK_IMPORTED_MODULE_3__.promises.writeFile('.npmrc', `//${env.NPM_CONFIG_REGISTRY}/:_authToken=${env.NPM_TOKEN}`);
-        console.log(`//${env.NPM_CONFIG_REGISTRY}/:_authToken=${env.NPM_TOKEN}`);
         await _actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec('node', [
             path,
             'publish',
             'from-package',
             '--yes'
-        ], { env });
+        ], {
+            env: {
+                ...env,
+                NODE_AUTH_TOKEN: env.NPM_TOKEN,
+                GH_TOKEN: env.GITHUB_TOKEN
+            }
+        });
     }
 }
 async function semanticRelease(path, release, publish, env = {}) {
