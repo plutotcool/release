@@ -102,7 +102,7 @@ import { promises as fs } from 'fs'
 
     await release(cliPath, true, publishToGithub, {
       ...process.env,
-      NPM_CONFIG_REGISTRY: `https://npm.pkg.github.com/${owner}`,
+      NPM_CONFIG_REGISTRY: `https://npm.pkg.github.com`,
       NPM_TOKEN: githubToken,
       GITHUB_TOKEN: githubToken
     })
