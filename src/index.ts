@@ -149,6 +149,12 @@ async function lernaRelease(
   }
 
   if (publish) {
+    await fs.writeFile('.npmrc', `//${
+      env.NPM_CONFIG_REGISTRY
+    }/:_authToken=${
+      env.NPM_TOKEN
+    }`)
+
     await exec.exec('node', [
       path,
       'publish',
