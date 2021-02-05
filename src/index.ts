@@ -105,6 +105,7 @@ import { npmConfigRegistry } from './config'
       ...process.env,
       NPM_CONFIG_REGISTRY: `https://npm.pkg.github.com`,
       NPM_TOKEN: githubToken,
+      GITHUB_TOKEN: githubToken
     })
 
     core.info(

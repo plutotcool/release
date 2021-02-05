@@ -7059,6 +7059,7 @@ async function npmConfigRegistry(registryUrl, token) {
             ...process.env,
             NPM_CONFIG_REGISTRY: `https://npm.pkg.github.com`,
             NPM_TOKEN: githubToken,
+            GITHUB_TOKEN: githubToken
         });
         core.info('Release available on GitHub');
         publishToGithub && core.info('Package available on GitHub registry');
