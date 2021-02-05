@@ -144,7 +144,8 @@ async function lernaRelease(
       path,
       'version',
       '--yes',
-      '--conventional-commits'
+      '--conventional-commits',
+      '--conventional-graduate'
     ], { env })
   }
 

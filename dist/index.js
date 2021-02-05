@@ -7080,7 +7080,8 @@ async function lernaRelease(path, release, publish, env = {}) {
             path,
             'version',
             '--yes',
-            '--conventional-commits'
+            '--conventional-commits',
+            '--conventional-graduate'
         ], { env });
     }
     if (publish) {
