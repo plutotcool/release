@@ -7032,8 +7032,9 @@ __webpack_require__.r(__webpack_exports__);
         await release(cliPath, true, publishToGithub, {
             ...process.env,
             NPM_CONFIG_REGISTRY: `https://npm.pkg.github.com`,
+            NODE_AUTH_TOKEN: githubToken,
+            GH_TOKEN: githubToken,
             NPM_TOKEN: githubToken,
-            GITHUB_TOKEN: githubToken
         });
         _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Release available on GitHub');
         publishToGithub && _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Package available on GitHub registry');
@@ -7064,13 +7065,7 @@ async function lernaRelease(path, release, publish, env = {}) {
             'publish',
             'from-package',
             '--yes'
-        ], {
-            env: {
-                ...env,
-                NODE_AUTH_TOKEN: env.NPM_TOKEN,
-                GH_TOKEN: env.GITHUB_TOKEN
-            }
-        });
+        ], { env });
     }
 }
 async function semanticRelease(path, release, publish, env = {}) {

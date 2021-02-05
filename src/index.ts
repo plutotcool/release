@@ -103,8 +103,9 @@ import { promises as fs } from 'fs'
     await release(cliPath, true, publishToGithub, {
       ...process.env,
       NPM_CONFIG_REGISTRY: `https://npm.pkg.github.com`,
+      NODE_AUTH_TOKEN: githubToken,
+      GH_TOKEN: githubToken,
       NPM_TOKEN: githubToken,
-      GITHUB_TOKEN: githubToken
     })
 
     core.info(
@@ -154,13 +155,7 @@ async function lernaRelease(
       'publish',
       'from-package',
       '--yes'
-    ], {
-      env: {
-        ...env,
-        NODE_AUTH_TOKEN: env.NPM_TOKEN,
-        GH_TOKEN: env.GITHUB_TOKEN
-      }
-    })
+    ], { env })
   }
 }
 
