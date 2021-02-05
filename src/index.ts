@@ -2,6 +2,7 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as github from '@actions/github'
 import { promises as fs } from 'fs'
+import { npmConfigRegistry } from './config'
 
 (async () => {
   try {
@@ -103,8 +104,6 @@ import { promises as fs } from 'fs'
     await release(cliPath, true, publishToGithub, {
       ...process.env,
       NPM_CONFIG_REGISTRY: `https://npm.pkg.github.com`,
-      NODE_AUTH_TOKEN: githubToken,
-      GH_TOKEN: githubToken,
       NPM_TOKEN: githubToken,
     })
 
@@ -150,12 +149,21 @@ async function lernaRelease(
   }
 
   if (publish) {
+    const npmEnv = await npmConfigRegistry(
+      env.NPM_CONFIG_REGISTRY, 
+      env.NPM_TOKEN
+    )
+
     await exec.exec('node', [
       path,
       'publish',
       'from-package',
-      '--yes'
-    ], { env })
+      '--yes',
+      '--registry',
+      env.NPM_CONFIG_REGISTRY
+    ], { 
+      env: { ...env, ...npmEnv }
+    })
   }
 }
 
