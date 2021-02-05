@@ -6947,30 +6947,56 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 144:
+/***/ 648:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
+// ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(186);
-/* harmony import */ var _actions_core__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_actions_core__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(514);
-/* harmony import */ var _actions_exec__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_actions_exec__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(438);
-/* harmony import */ var _actions_github__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_actions_github__WEBPACK_IMPORTED_MODULE_2__);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(747);
-/* harmony import */ var fs__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(fs__WEBPACK_IMPORTED_MODULE_3__);
+
+// EXTERNAL MODULE: ./node_modules/@actions/core/lib/core.js
+var core = __webpack_require__(186);
+// EXTERNAL MODULE: ./node_modules/@actions/exec/lib/exec.js
+var exec = __webpack_require__(514);
+// EXTERNAL MODULE: ./node_modules/@actions/github/lib/github.js
+var github = __webpack_require__(438);
+// EXTERNAL MODULE: external "fs"
+var external_fs_ = __webpack_require__(747);
+// EXTERNAL MODULE: external "path"
+var external_path_ = __webpack_require__(622);
+var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
+
+// CONCATENATED MODULE: ./src/config.ts
+
+
+
+const npmrc = external_path_default().resolve(process.env['RUNNER_TEMP'] || process.cwd(), '.npmrc');
+async function npmConfigRegistry(registryUrl, token) {
+    if (!registryUrl.endsWith('/')) {
+        registryUrl += '/';
+    }
+    core.info(`Setup NPM registry URL: ${registryUrl} on ${npmrc}`);
+    registryUrl = registryUrl.replace(/(^\w+:|^)/, '') + ':_authToken=${NODE_AUTH_TOKEN}';
+    await external_fs_.promises.writeFile(npmrc, registryUrl, 'utf-8');
+    return {
+        NPM_CONFIG_USERCONFIG: npmrc,
+        NODE_AUTH_TOKEN: token
+    };
+}
+
+// CONCATENATED MODULE: ./src/index.ts
+
 
 
 
 
 (async () => {
     try {
-        const owner = _actions_github__WEBPACK_IMPORTED_MODULE_2__.context.repo.owner;
+        const owner = github.context.repo.owner;
         const ownerScope = `@${owner}`;
-        const npmToken = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('npm_token');
-        const githubToken = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('github_token', { required: true });
-        const publish = _actions_core__WEBPACK_IMPORTED_MODULE_0__.getInput('publish') !== 'false';
+        const npmToken = core.getInput('npm_token');
+        const githubToken = core.getInput('github_token', { required: true });
+        const publish = core.getInput('publish') !== 'false';
         let publishToGithub;
         let publishToNPM;
         let privatePackage;
@@ -6979,18 +7005,18 @@ __webpack_require__.r(__webpack_exports__);
         let cliPath;
         let release;
         try {
-            await fs__WEBPACK_IMPORTED_MODULE_3__.promises.access('lerna.json');
+            await external_fs_.promises.access('lerna.json');
             cli = 'lerna';
             release = lernaRelease;
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Lerna detected, releasing using lerna');
+            core.info('Lerna detected, releasing using lerna');
         }
         catch (_) {
             cli = 'semantic-release';
             release = semanticRelease;
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Lerna not detected, releasing using semantic-release');
+            core.info('Lerna not detected, releasing using semantic-release');
         }
         try {
-            const pkg = JSON.parse((await fs__WEBPACK_IMPORTED_MODULE_3__.promises.readFile('package.json')).toString());
+            const pkg = JSON.parse((await external_fs_.promises.readFile('package.json')).toString());
             privatePackage = cli !== 'lerna' && pkg.private;
             scope = pkg.name.slice(0, pkg.name.indexOf('/'));
             publishToGithub = publish && !privatePackage && scope === ownerScope;
@@ -7003,55 +7029,54 @@ __webpack_require__.r(__webpack_exports__);
             publishToNPM = false;
         }
         if (!publish) {
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Publishing disabled, skipping publishing to package registries');
+            core.info('Publishing disabled, skipping publishing to package registries');
         }
         else if (privatePackage) {
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Private package detected, skipping publishing to package registries');
+            core.info('Private package detected, skipping publishing to package registries');
         }
         else {
-            scope !== ownerScope && _actions_core__WEBPACK_IMPORTED_MODULE_0__.warning(`Package not scoped with ${ownerScope}, skipping publishing to GitHub registry`);
-            !npmToken && _actions_core__WEBPACK_IMPORTED_MODULE_0__.warning('NPM token not provided, skipping publishing to NPM registry');
+            scope !== ownerScope && core.warning(`Package not scoped with ${ownerScope}, skipping publishing to GitHub registry`);
+            !npmToken && core.warning('NPM token not provided, skipping publishing to NPM registry');
         }
         try {
-            await fs__WEBPACK_IMPORTED_MODULE_3__.promises.access(`node_modules/${cli}/package.json`);
+            await external_fs_.promises.access(`node_modules/${cli}/package.json`);
         }
         catch (_) {
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Installing ${cli}...`);
-            await _actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec('npm', [
+            core.info(`Installing ${cli}...`);
+            await exec.exec('npm', [
                 'install',
                 cli,
                 '--no-save',
                 '--no-package-lock'
             ]);
-            _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Installed ${cli}`);
+            core.info(`Installed ${cli}`);
         }
         cliPath = `node_modules/${cli}/${JSON
-            .parse((await fs__WEBPACK_IMPORTED_MODULE_3__.promises.readFile(`node_modules/${cli}/package.json`)).toString())
+            .parse((await external_fs_.promises.readFile(`node_modules/${cli}/package.json`)).toString())
             .bin[cli]}`;
-        _actions_core__WEBPACK_IMPORTED_MODULE_0__.info(`Creating release on GitHub${publishToGithub ? ' and publishing to GitHub registry' : ''}...`);
+        core.info(`Creating release on GitHub${publishToGithub ? ' and publishing to GitHub registry' : ''}...`);
         await release(cliPath, true, publishToGithub, {
             ...process.env,
-            NPM_CONFIG_REGISTRY: `https://npm.pkg.github.com/${owner}`,
+            NPM_CONFIG_REGISTRY: `https://npm.pkg.github.com`,
             NPM_TOKEN: githubToken,
-            GITHUB_TOKEN: githubToken
         });
-        _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Release available on GitHub');
-        publishToGithub && _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Package available on GitHub registry');
-        publishToNPM && _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Publishing to NPM registry...');
+        core.info('Release available on GitHub');
+        publishToGithub && core.info('Package available on GitHub registry');
+        publishToNPM && core.info('Publishing to NPM registry...');
         await release(cliPath, false, publishToNPM, {
             ...process.env,
             NPM_CONFIG_REGISTRY: 'https://registry.npmjs.org',
             NPM_TOKEN: npmToken
         });
-        publishToNPM && _actions_core__WEBPACK_IMPORTED_MODULE_0__.info('Package available on NPM registry');
+        publishToNPM && core.info('Package available on NPM registry');
     }
     catch (error) {
-        _actions_core__WEBPACK_IMPORTED_MODULE_0__.setFailed(error.message);
+        core.setFailed(error.message);
     }
 })();
 async function lernaRelease(path, release, publish, env = {}) {
     if (release) {
-        await _actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec('node', [
+        await exec.exec('node', [
             path,
             'version',
             '--yes',
@@ -7059,16 +7084,22 @@ async function lernaRelease(path, release, publish, env = {}) {
         ], { env });
     }
     if (publish) {
-        await _actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec('node', [
+        const npmEnv = await npmConfigRegistry(env.NPM_CONFIG_REGISTRY, env.NPM_TOKEN);
+        await exec.exec('node', [
             path,
             'publish',
-            '--yes'
-        ], { env });
+            'from-package',
+            '--yes',
+            '--registry',
+            env.NPM_CONFIG_REGISTRY
+        ], {
+            env: { ...env, ...npmEnv }
+        });
     }
 }
 async function semanticRelease(path, release, publish, env = {}) {
     if (release) {
-        await _actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec('node', [
+        await exec.exec('node', [
             path,
             '--no-ci',
             '--extends',
@@ -7080,7 +7111,7 @@ async function semanticRelease(path, release, publish, env = {}) {
         ], { env });
     }
     if (publish) {
-        await _actions_exec__WEBPACK_IMPORTED_MODULE_1__.exec('node', [
+        await exec.exec('node', [
             path,
             '--no-ci',
             '--extends',
@@ -7290,6 +7321,6 @@ module.exports = require("zlib");;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(144);
+/******/ 	return __webpack_require__(648);
 /******/ })()
 ;
