@@ -29,10 +29,10 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v1
       with:
-        node-version: 12
+        node-version: 14
     - run: yarn
     - run: yarn build
-    - uses: plutotcool/release@v1
+    - uses: plutotcool/release@v1.1.1
       with:
         github_token:  ${{ secrets.GITHUB_TOKEN }}
         npm_token: ${{ secrets.NPM_TOKEN }}
