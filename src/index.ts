@@ -123,7 +123,8 @@ import { npmConfigRegistry } from './config'
     await release(cliPath, false, publishToNPM, {
       ...process.env,
       NPM_CONFIG_REGISTRY: 'https://registry.npmjs.org',
-      NPM_TOKEN: npmToken
+      NPM_TOKEN: npmToken,
+      GITHUB_TOKEN: githubToken
     })
 
     publishToNPM && core.info(
