@@ -7067,7 +7067,8 @@ async function npmConfigRegistry(registryUrl, token) {
         await release(cliPath, false, publishToNPM, {
             ...process.env,
             NPM_CONFIG_REGISTRY: 'https://registry.npmjs.org',
-            NPM_TOKEN: npmToken
+            NPM_TOKEN: npmToken,
+            GITHUB_TOKEN: githubToken
         });
         publishToNPM && core.info('Package available on NPM registry');
     }
