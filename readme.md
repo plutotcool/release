@@ -32,7 +32,7 @@ jobs:
         node-version: 14
     - run: yarn
     - run: yarn build
-    - uses: plutotcool/release@v1.1.2
+    - uses: plutotcool/release@v1
       with:
         github_token:  ${{ secrets.GITHUB_TOKEN }}
         npm_token: ${{ secrets.NPM_TOKEN }}
