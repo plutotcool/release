@@ -153,7 +153,7 @@ async function lernaRelease(
 
   if (publish) {
     const npmEnv = await npmConfigRegistry(
-      env.NPM_CONFIG_REGISTRY, 
+      env.NPM_CONFIG_REGISTRY,
       env.NPM_TOKEN
     )
 
@@ -164,7 +164,7 @@ async function lernaRelease(
       '--yes',
       '--registry',
       env.NPM_CONFIG_REGISTRY
-    ], { 
+    ], {
       env: { ...env, ...npmEnv }
     })
   }
@@ -181,20 +181,16 @@ async function semanticRelease(
       path,
       '--no-ci',
       '--extends',
-      `${__dirname}/../release.config.js`,
-      '--plugins',
-      '@semantic-release/commit-analyzer,' +
-      '@semantic-release/release-notes-generator,' +
-      '@semantic-release/github'
+      `${__dirname}/../release.config.js`
     ], { env })
   }
 
   if (publish) {
-    await exec.exec('node', [
-      path,
-      '--no-ci',
-      '--extends',
-      `${__dirname}/../release.config.js`
+    await exec.exec('yarn', [
+      'publish',
+      '--non-interactive',
+      '--no-git-tag-version',
+      '--access', 'public'
     ], { env })
   }
 }

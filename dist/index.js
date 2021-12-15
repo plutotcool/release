@@ -7106,19 +7106,15 @@ async function semanticRelease(path, release, publish, env = {}) {
             path,
             '--no-ci',
             '--extends',
-            `${__dirname}/../release.config.js`,
-            '--plugins',
-            '@semantic-release/commit-analyzer,' +
-                '@semantic-release/release-notes-generator,' +
-                '@semantic-release/github'
+            __webpack_require__.ab + "release.config.js"
         ], { env });
     }
     if (publish) {
-        await exec.exec('node', [
-            path,
-            '--no-ci',
-            '--extends',
-            __webpack_require__.ab + "release.config.js"
+        await exec.exec('yarn', [
+            'publish',
+            '--non-interactive',
+            '--no-git-tag-version',
+            '--access', 'public'
         ], { env });
     }
 }
