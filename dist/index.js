@@ -7110,12 +7110,13 @@ async function semanticRelease(path, release, publish, env = {}) {
         ], { env });
     }
     if (publish) {
+        const npmEnv = await npmConfigRegistry(env.NPM_CONFIG_REGISTRY, env.NPM_TOKEN);
         await exec.exec('yarn', [
             'publish',
             '--non-interactive',
             '--no-git-tag-version',
             '--access', 'public'
-        ], { env });
+        ], { env: { ...env, ...npmEnv } });
     }
 }
 
