@@ -153,7 +153,7 @@ async function lernaRelease(
 
   if (publish) {
     const npmEnv = await npmConfigRegistry(
-      env.NPM_CONFIG_REGISTRY,
+      env.NPM_CONFIG_REGISTRY, 
       env.NPM_TOKEN
     )
 
@@ -164,7 +164,7 @@ async function lernaRelease(
       '--yes',
       '--registry',
       env.NPM_CONFIG_REGISTRY
-    ], {
+    ], { 
       env: { ...env, ...npmEnv }
     })
   }
