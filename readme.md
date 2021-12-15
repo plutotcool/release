@@ -54,6 +54,24 @@ jobs:
 
 ### `publish`
 
-`string` *(optional, default `true`)*
+`boolean` *(optional, default `true`)*
 
 Enable or disable publishing to package registries. When set to false, only releases are created on GitHub.
+
+### `push`
+
+`boolean` *(optional, default `true`)*
+
+Enable or disable pushing changes made by the action.
+
+## `git_user_name`
+
+`string` *(optional, default: `'github-actions[bot]'`)*
+
+User name to use when pushing to GitHub.
+
+## `git_user_email`
+
+`string` *(optional, default: `'github-actions[bot]@users.noreply.github.com'`)*
+
+Email to use when pushing to GitHub.

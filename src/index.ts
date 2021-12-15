@@ -11,6 +11,9 @@ import { npmConfigRegistry } from './config'
     const npmToken: string = core.getInput('npm_token')
     const githubToken: string = core.getInput('github_token', { required: true })
     const publish: boolean = core.getInput('publish') !== 'false'
+    const push: boolean = core.getInput('push') !== 'false'
+    const gitUserName: string = core.getInput('git_user_name')
+    const gitUserEmail: string = core.getInput('git_user_email')
 
     let publishToGithub: boolean
     let publishToNPM: boolean
@@ -130,6 +133,20 @@ import { npmConfigRegistry } from './config'
     publishToNPM && core.info(
       'Package available on NPM registry'
     )
+
+    if (push) {
+      core.info(
+        'Pushing changes to GitHub repository...'
+      )
+
+      await exec.exec('git', ['config', '--global', 'user.name', gitUserName])
+      await exec.exec('git', ['config', '--global', 'user.email', gitUserEmail])
+      await exec.exec('git', ['push'])
+
+      core.info(
+        'GitHub repository up to date'
+      )
+    }
   } catch (error) {
     core.setFailed(error.message)
   }
