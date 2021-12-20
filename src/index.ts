@@ -2,7 +2,7 @@ import * as core from '@actions/core'
 import * as exec from '@actions/exec'
 import * as github from '@actions/github'
 import { promises as fs } from 'fs'
-import { npmConfigRegistry } from './config'
+import { npmConfig } from './npm-config'
 
 (async () => {
   try {
@@ -12,8 +12,9 @@ import { npmConfigRegistry } from './config'
     const githubToken: string = core.getInput('github_token', { required: true })
     const publish: boolean = core.getInput('publish') !== 'false'
     const push: boolean = core.getInput('push') !== 'false'
-    const gitUserName: string = core.getInput('git_user_name')
-    const gitUserEmail: string = core.getInput('git_user_email')
+    const name: string = core.getInput('name')
+    const email: string = core.getInput('email')
+    const message: string = core.getInput('message')
 
     let publishToGithub: boolean
     let publishToNPM: boolean
@@ -25,6 +26,7 @@ import { npmConfigRegistry } from './config'
       path: string,
       release: boolean,
       publish: boolean,
+      message: string,
       env?: { [variable: string]: string }
     ) => Promise<void>
 
@@ -100,11 +102,14 @@ import { npmConfigRegistry } from './config'
       .bin[cli]
     }`
 
+    await exec.exec('git', ['config', '--global', 'user.name', name])
+    await exec.exec('git', ['config', '--global', 'user.email', email])
+
     core.info(
       `Creating release on GitHub${publishToGithub ? ' and publishing to GitHub registry' : ''}...`
     )
 
-    await release(cliPath, true, publishToGithub, {
+    await release(cliPath, true, publishToGithub, message, {
       ...process.env,
       NPM_CONFIG_REGISTRY: `https://npm.pkg.github.com`,
       NPM_TOKEN: githubToken,
@@ -123,7 +128,7 @@ import { npmConfigRegistry } from './config'
       'Publishing to NPM registry...'
     )
 
-    await release(cliPath, false, publishToNPM, {
+    await release(cliPath, false, publishToNPM, message, {
       ...process.env,
       NPM_CONFIG_REGISTRY: 'https://registry.npmjs.org',
       NPM_TOKEN: npmToken,
@@ -139,8 +144,6 @@ import { npmConfigRegistry } from './config'
         'Pushing changes to GitHub repository...'
       )
 
-      await exec.exec('git', ['config', '--global', 'user.name', gitUserName])
-      await exec.exec('git', ['config', '--global', 'user.email', gitUserEmail])
       await exec.exec('git', ['push'])
 
       core.info(
@@ -156,6 +159,7 @@ async function lernaRelease(
   path: string,
   release: boolean,
   publish: boolean,
+  message: string,
   env: { [variable: string]: string } = {}
 ): Promise<void> {
   if (release) {
@@ -169,9 +173,10 @@ async function lernaRelease(
   }
 
   if (publish) {
-    const npmEnv = await npmConfigRegistry(
+    const npmEnv = await npmConfig(
       env.NPM_CONFIG_REGISTRY,
-      env.NPM_TOKEN
+      env.NPM_TOKEN,
+      message
     )
 
     await exec.exec('node', [
@@ -191,6 +196,7 @@ async function semanticRelease(
   path: string,
   release: boolean,
   publish: boolean,
+  message: string,
   env: { [variable: string]: string } = {}
 ): Promise<void> {
   if (release) {
@@ -203,9 +209,10 @@ async function semanticRelease(
   }
 
   if (publish) {
-    const npmEnv = await npmConfigRegistry(
+    const npmEnv = await npmConfig(
       env.NPM_CONFIG_REGISTRY,
-      env.NPM_TOKEN
+      env.NPM_TOKEN,
+      message
     )
 
     await exec.exec('yarn', [

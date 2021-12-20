@@ -58,26 +58,26 @@ jobs:
 
 Enable or disable publishing to package registries. When set to false, only releases are created on GitHub.
 
-### `commit`
+### `push`
 
 `boolean` *(optional, default `true`)*
 
-Enable or disable commiting and pushing changes made by the action.
+Enable or disable pushing changes made by the action.
 
-## `commit_name`
+## `name`
 
 `string` *(optional, default: `'github-actions[bot]'`)*
 
 User name to use when pushing to GitHub.
 
-## `commit_email`
+## `email`
 
 `string` *(optional, default: `'github-actions[bot]@users.noreply.github.com'`)*
 
 Email to use when pushing to GitHub.
 
-## `commit_message`
+## `message`
 
 `string` *(optional, default: `'ci: release'`)*
 
-Commit message to use when pushing to GitHub.
+Commit message to use when bumping package.json.

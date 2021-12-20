@@ -6947,7 +6947,7 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 648:
+/***/ 986:
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -6966,18 +6966,18 @@ var external_fs_ = __webpack_require__(747);
 var external_path_ = __webpack_require__(622);
 var external_path_default = /*#__PURE__*/__webpack_require__.n(external_path_);
 
-// CONCATENATED MODULE: ./src/config.ts
+// CONCATENATED MODULE: ./src/npm-config.ts
 
 
 
 const npmrc = external_path_default().resolve(process.env['RUNNER_TEMP'] || process.cwd(), '.npmrc');
-async function npmConfigRegistry(registryUrl, token) {
+async function npmConfig(registryUrl, token, message) {
     if (!registryUrl.endsWith('/')) {
         registryUrl += '/';
     }
     core.info(`Setup NPM registry URL: ${registryUrl} on ${npmrc}`);
-    registryUrl = registryUrl.replace(/(^\w+:|^)/, '') + ':_authToken=${NODE_AUTH_TOKEN}';
-    await external_fs_.promises.writeFile(npmrc, registryUrl, 'utf-8');
+    await external_fs_.promises.writeFile(npmrc, (`${registryUrl.replace(/(^\w+:|^)/, '')}:_authToken=\${NODE_AUTH_TOKEN}\n` +
+        `message=${message}\n`), 'utf-8');
     return {
         NPM_CONFIG_USERCONFIG: npmrc,
         NODE_AUTH_TOKEN: token
@@ -6998,8 +6998,9 @@ async function npmConfigRegistry(registryUrl, token) {
         const githubToken = core.getInput('github_token', { required: true });
         const publish = core.getInput('publish') !== 'false';
         const push = core.getInput('push') !== 'false';
-        const gitUserName = core.getInput('git_user_name');
-        const gitUserEmail = core.getInput('git_user_email');
+        const name = core.getInput('name');
+        const email = core.getInput('email');
+        const message = core.getInput('message');
         let publishToGithub;
         let publishToNPM;
         let privatePackage;
@@ -7057,8 +7058,10 @@ async function npmConfigRegistry(registryUrl, token) {
         cliPath = `node_modules/${cli}/${JSON
             .parse((await external_fs_.promises.readFile(`node_modules/${cli}/package.json`)).toString())
             .bin[cli]}`;
+        await exec.exec('git', ['config', '--global', 'user.name', name]);
+        await exec.exec('git', ['config', '--global', 'user.email', email]);
         core.info(`Creating release on GitHub${publishToGithub ? ' and publishing to GitHub registry' : ''}...`);
-        await release(cliPath, true, publishToGithub, {
+        await release(cliPath, true, publishToGithub, message, {
             ...process.env,
             NPM_CONFIG_REGISTRY: `https://npm.pkg.github.com`,
             NPM_TOKEN: githubToken,
@@ -7067,7 +7070,7 @@ async function npmConfigRegistry(registryUrl, token) {
         core.info('Release available on GitHub');
         publishToGithub && core.info('Package available on GitHub registry');
         publishToNPM && core.info('Publishing to NPM registry...');
-        await release(cliPath, false, publishToNPM, {
+        await release(cliPath, false, publishToNPM, message, {
             ...process.env,
             NPM_CONFIG_REGISTRY: 'https://registry.npmjs.org',
             NPM_TOKEN: npmToken,
@@ -7076,8 +7079,6 @@ async function npmConfigRegistry(registryUrl, token) {
         publishToNPM && core.info('Package available on NPM registry');
         if (push) {
             core.info('Pushing changes to GitHub repository...');
-            await exec.exec('git', ['config', '--global', 'user.name', gitUserName]);
-            await exec.exec('git', ['config', '--global', 'user.email', gitUserEmail]);
             await exec.exec('git', ['push']);
             core.info('GitHub repository up to date');
         }
@@ -7086,7 +7087,7 @@ async function npmConfigRegistry(registryUrl, token) {
         core.setFailed(error.message);
     }
 })();
-async function lernaRelease(path, release, publish, env = {}) {
+async function lernaRelease(path, release, publish, message, env = {}) {
     if (release) {
         await exec.exec('node', [
             path,
@@ -7097,7 +7098,7 @@ async function lernaRelease(path, release, publish, env = {}) {
         ], { env });
     }
     if (publish) {
-        const npmEnv = await npmConfigRegistry(env.NPM_CONFIG_REGISTRY, env.NPM_TOKEN);
+        const npmEnv = await npmConfig(env.NPM_CONFIG_REGISTRY, env.NPM_TOKEN, message);
         await exec.exec('node', [
             path,
             'publish',
@@ -7110,7 +7111,7 @@ async function lernaRelease(path, release, publish, env = {}) {
         });
     }
 }
-async function semanticRelease(path, release, publish, env = {}) {
+async function semanticRelease(path, release, publish, message, env = {}) {
     if (release) {
         await exec.exec('node', [
             path,
@@ -7120,7 +7121,7 @@ async function semanticRelease(path, release, publish, env = {}) {
         ], { env });
     }
     if (publish) {
-        const npmEnv = await npmConfigRegistry(env.NPM_CONFIG_REGISTRY, env.NPM_TOKEN);
+        const npmEnv = await npmConfig(env.NPM_CONFIG_REGISTRY, env.NPM_TOKEN, message);
         await exec.exec('yarn', [
             'publish',
             '--non-interactive',
@@ -7331,6 +7332,6 @@ module.exports = require("zlib");;
 /******/ 	// module exports must be returned from runtime so entry inlining is disabled
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(648);
+/******/ 	return __webpack_require__(986);
 /******/ })()
 ;

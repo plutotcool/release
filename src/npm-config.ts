@@ -7,9 +7,10 @@ const npmrc = path.resolve(
   '.npmrc'
 )
 
-export async function npmConfigRegistry(
-  registryUrl: string, 
-  token: string
+export async function npmConfig(
+  registryUrl: string,
+  token: string,
+  message: string
 ): Promise<NodeJS.ProcessEnv> {
   if (!registryUrl.endsWith('/')) {
     registryUrl += '/'
@@ -17,8 +18,10 @@ export async function npmConfigRegistry(
 
   core.info(`Setup NPM registry URL: ${registryUrl} on ${npmrc}`)
 
-  registryUrl = registryUrl.replace(/(^\w+:|^)/, '') + ':_authToken=${NODE_AUTH_TOKEN}'
-  await fs.writeFile(npmrc, registryUrl, 'utf-8')
+  await fs.writeFile(npmrc, (
+    `${registryUrl.replace(/(^\w+:|^)/, '')}:_authToken=\${NODE_AUTH_TOKEN}\n` +
+    `message=${message}\n`
+  ), 'utf-8')
 
   return {
     NPM_CONFIG_USERCONFIG: npmrc,
