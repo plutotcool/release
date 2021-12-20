@@ -12,17 +12,21 @@ inputs:
     description: Enable or disable publishing to package registries. When set to false, releases are only created on GitHub.
     default: true
     required: false
-  push:
-    description: Enable or disable pushing changes made by the action.
+  commit:
+    description: Enable or disable commiting and pushing changes made by the action.
     default: true
     required: false
-  git_user_name:
+  commit_name:
     description: User name to use when pushing to GitHub.
     default: github-actions[bot]
     required: false
-  git_user_email:
+  commit_email:
     description: Email to use when pushing to GitHub.
     default: github-actions[bot]@users.noreply.github.com
+    required: false
+  commit_message:
+    description: Commit message to use when pushing to GitHub.
+    default: 'ci: release'
     required: false
 runs:
   using: node12
